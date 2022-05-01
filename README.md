@@ -16,7 +16,11 @@ You can also add more files to ClassicMode_FilesToCatch to load things beyond Cl
 1. Select a character from the Classic Mode menu. THis will prompt a keyboard instruction.
 2. (This step only applies if you followed #3 above) Select the ID number corresponding to your folder.
 3. Type the ID number corresponding to the file you want to use (See DefaultRoutes.csv for numbers corresponding to the defaults). Alternatively, type 'R' or 'r' (Not the button R, the letter on the keyboard), to randomly choose from the folder.
+
 This route will stay until it's unloaded from memory, so to change the route for a character after already choosing, choose another character, then go back after entering the difficulty screen.
+
 The route will also not change name to reflect the new route (this is because the names are stored seperately from the actual routes).
+
+Finally, assist trophy/pokeball odds will *not* change from the character's original route, though normal item distributions will. One notable example is Young Link, who's assist trophies are exclusively Zelda-themed.
 
 Credit to Coolsonickirby for his [Arc Randomizer](https://github.com/Coolsonickirby/arc-randomizer), from which this project was built on, and jam1garner's [Smash Minecraft Skins](https://github.com/jam1garner/smash-minecraft-skins), from which UI components were adapted from.
