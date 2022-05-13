@@ -12,8 +12,10 @@
 
 You can also add more files to ClassicMode_FilesToCatch to load things beyond Classic Modes in a similar manner, however it's only recommended for things that are loaded by only a single file (as it will prompt you for every file for something such as fighter data).
 
+Note that classic modes for Giga Bowser, Squirtle, Ivysaur, and Charizard are accounted for in these files, however they'll need a mod that grants them a proper Classic Mode route and staff roll parameters to load on top of, otherwise the mod can't recognize that a file's been loaded. I plan on making Classic Modes for each in the future, though copying the files from normal Bowser/Pokemon Trainer and altering to the appropriate names like you would a normal mod should do just fine.
+
 ## In-Game Usage
-1. Select a character from the Classic Mode menu. THis will prompt a keyboard instruction.
+1. Select a character from the Classic Mode menu. This will prompt a keyboard instruction.
 2. (This step only applies if you followed #3 above) Select the ID number corresponding to your folder.
 3. Type the ID number corresponding to the file you want to use (See DefaultRoutes.csv for numbers corresponding to the defaults). Alternatively, type 'R' or 'r' (Not the button R, the letter on the keyboard), to randomly choose from the folder.
 This route will stay until it's unloaded from memory, so to change the route for a character after already choosing, choose another character, then go back after entering the difficulty screen.
