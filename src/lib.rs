@@ -11,16 +11,22 @@ use walkdir::WalkDir;
 use arcropolis_api::*;
 
 mod keyboard;
+mod webmenu;
 
 const RANDOMIZE_PATH: &str = "rom:/ClassicModeSelector_FilesToCatch/";
 const FILECHOICE_PATH: &str = "rom:/ClassicModeSelector";
+
 
 lazy_static! {
     static ref FILE_HOLDER: Mutex<HashMap<u64, PathBuf>> = {
         let m = HashMap::new();
         Mutex::new(m)
-    };    
+    };  
+	/*static ref SKINS: Mutex<webmenu::Skins> = Mutex::new(
+        webmenu::Skins::init().unwrap_or_default()
+    );*/	
 }
+
 
 pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
     let mut rng = rand::thread_rng();
@@ -29,9 +35,10 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 
 
 
-
 	
 	let mut folders = HashMap::new();
+	let mut folders_text = vec![];
+	
 	for entry in fs::read_dir(FILECHOICE_PATH)?
 	{
 		
@@ -39,6 +46,7 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 		let path = entry.path();
 		if path.is_dir() {
 			folders.insert(folders.len(), format!("{}", path.display()));
+			folders_text.insert(folders_text.len(),format!("{}",path.display()));
 		}
 		
 	}
@@ -46,9 +54,37 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 	if folders.len() > 1
 	{
 		println!("{}","Many Folders.");
+
+		//webmenu::Skins webpage = webmenu::Skins::init();
+		let mut webpage = webmenu::Skins{
+			skins: folders_text,
+		};
+		//webpage.set_skins();
+		
+		//SKINS.lock().unwrap().set_skins(folders_text);
+		
+		let webOut = webpage.get_file_index();//SKINS.lock().unwrap().get_file_index();
+		println!("{}",webOut.to_string());
+		
+		if webOut == "*Default"
+		{
+			return Err(Error::new(ErrorKind::Other, "Default Route"));
+		}
+		else if webOut == "*Random"
+		{
+			folder_choice = rng.gen_range(0..folders.len());
+		}
+		else
+		{
+			let output = webpage.skins.iter().position(|s| s == &webOut).unwrap();
+			folder_choice = output;
+		}
+		
+		
+		/*
 		let folder_text = format!("Enter Folder ID (0-{})", (folders.len()-1).to_string());
 		folder_choice = (ShowKeyboardArg::new().header_text(&folder_text)
-						.show().unwrap_or("0".to_string())).parse::<usize>().unwrap();
+						.show().unwrap_or("0".to_string())).parse::<usize>().unwrap();*/
 	}
 	else if folders.len() <= 0
 	{
@@ -67,6 +103,7 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 
 
 	let mut files = HashMap::new();
+	let mut files_text = vec![];
 	//println!("{}",directory.display());
 	
 	
@@ -80,6 +117,7 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 		let path = entry.path();
 		if !&path.is_dir() {
 			files.insert(files.len(), format!("{}", path.display()));
+			files_text.insert(files_text.len(), format!("{}", path.display()));
 		}
 	}
 
@@ -93,7 +131,29 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 	let display = format!("Enter Classic Mode ID (0-{})", (count-1).to_string());
 	
 	
-	let mut user_input = ShowKeyboardArg::new().header_text(&display).show().unwrap_or("0".to_string());
+	//let mut user_input = ShowKeyboardArg::new().header_text(&display).show().unwrap_or("0".to_string());
+	
+	let mut webpage = webmenu::Skins{
+			skins: files_text,
+		};
+	let mut user_input = webpage.get_file_index();//SKINS.lock().unwrap().get_file_index();
+	println!("{}",user_input.to_string());
+	
+	if user_input == "*Default"
+	{
+		return Err(Error::new(ErrorKind::Other, "Default Route"));
+	}
+	else if user_input == "*Random"
+	{
+		println!("{}","Random");
+		user_input = rng.gen_range(0..count).to_string();
+	}
+	else
+	{
+		let output = webpage.skins.iter().position(|s| s == &user_input).unwrap();
+		user_input = output.to_string();
+	}
+	
 	
 	
 	if user_input == "R" || user_input == "r"
@@ -181,12 +241,12 @@ fn get_biggest_size_from_path(path: &Path) -> usize{
     biggest_size
 }
 
-#[skyline::main(name = "arc-randomizer")]
+#[skyline::main(name = "arc-classicmodeselector")]
 pub fn main() {
     if !Path::new(RANDOMIZE_PATH).exists(){
         return;
     }
-
+	
     for entry in WalkDir::new(&RANDOMIZE_PATH) {
         let entry = entry.unwrap();
 

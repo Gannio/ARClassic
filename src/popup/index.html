@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArClassic Route Selector</title>
+    <style>
+        .arclassic-skin-display {
+            image-rendering: crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            /* crop pos: 8, 8 | size: 8, 8 */
+            position: absolute;
+            width: 1600px;
+            height: 1600px;
+            clip: rect(200px, 400px, 400px, 200px);
+        }
+
+        .arclassic-skin-button {
+            position: absolute;
+            width: 400px;
+            height: 100px;
+            border-radius: 0px;
+            background: none;
+			background-color: #303030;
+			color: #FBFBFB;
+            border: none;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 25px;
+			font-weight: 550;
+        }
+    </style>
+</head>
+<body>
+	<p>TEST TEST TEST</p>
+    <button class="arclassic-skin-button" style="left: 0px; top: 0px;" onclick="location.href='http://localhost/default';">Default</button>
+    
+    {{#skins}}
+    <button class="arclassic-skin-button" style="left: {{button_left}}px; top: {{button_top}}px;" onclick="location.href='http://localhost/{{path}}';">{{path}}</button>
+    {{/skins}}
+
+    <button class="arclassic-skin-button" style="left: {{add_button_left}}px; top: {{add_button_top}}px;" onclick="location.href='http://localhost/random';">Random</button>
+</body>
+<script>
+	var myClasses = document.getElementsByClassName("arclassic-skin-button");
+
+	for (var i = 0; i < myClasses.length; i++) {
+		myClasses[i].innerHTML = myClasses[i].innerHTML.replace("rom:", "");//.replace("rom:/ClassicModeSelector/","");
+		myClasses[i].innerHTML = myClasses[i].innerHTML.replace(/^.*[\\\/]/, '');//.replace("rom:/ClassicModeSelector/","");
+		myClasses[i].innerHTML = myClasses[i].innerHTML.replace("standard_route_", "");//.replace("rom:/ClassicModeSelector/","");
+		myClasses[i].innerHTML = myClasses[i].innerHTML.replace(".prc", "");//.replace("rom:/ClassicModeSelector/","");
+	}
+	print("Done?");
+</script>
+</html>
