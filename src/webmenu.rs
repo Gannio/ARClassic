@@ -1,20 +1,16 @@
-use std::fs;
-use std::path::{Path, PathBuf};
-
 //use image::DynamicImage;
 use skyline_web::Webpage;
 use ramhorns::{Template, Content};//This might not actually be needed idk yet as of writing this lol.
 use percent_encoding::percent_decode_str;//Same with this though it *does* look more needed.
 
 //use crate::minecraft_api::*;
-use crate::keyboard::ShowKeyboardArg;
 //use crate::modern_skin::convert_to_modern_skin;
 
 const LOCALHOST: &str = "http://localhost/";
 
-const ROUTE_DIR: &str = "rom:/ClassicModeSelector";//"sd:/atmosphere/contents/01006A800016E000/romfs/minecraft_skins";
+//const ROUTE_DIR: &str = "rom:/ClassicModeSelector";//"sd:/atmosphere/contents/01006A800016E000/romfs/minecraft_skins";
 
-const CACHE_VER: &str = "version=0";//because the switch apparently saves cache, use this to effectively make them useless during testing.
+//const CACHE_VER: &str = "version=0";//because the switch apparently saves cache, use this to effectively make them useless during testing.
 
 
 #[derive(Default)]
@@ -44,8 +40,8 @@ struct Rendered<'a> {
 #[derive(Debug, Clone, PartialEq)]
 enum Skin {
     Default,
+	Random,
     Custom(String),
-    Random,
 }
 
 
@@ -54,6 +50,11 @@ impl Skins {
         let mut skins = vec![];
 
         let mut i = 1;
+		
+		let (add_left, add_top) = index_to_image_x_y(i);
+        let (add_button_left, add_button_top) = index_to_button_x_y(i);
+		
+		i += 1;
 		
         for skin in &self.skins {
             let (left, top) = index_to_image_x_y(i);
@@ -69,8 +70,7 @@ impl Skins {
             i += 1;
         }
 
-        let (add_left, add_top) = index_to_image_x_y(i);
-        let (add_button_left, add_button_top) = index_to_button_x_y(i);
+        
 
         Rendered { skins, add_top, add_left, add_button_left, add_button_top }
     }
@@ -108,8 +108,9 @@ impl Skins {
         loop {
             match self.show_menu() {
 				Skin::Default => return "*Default".to_string(),/*None,*/
-				Skin::Custom(custom) => return custom.to_string(),/*Some(Path::new(ROUTE_DIR).join(custom))*/
 				Skin::Random => return "*Random".to_string(),
+				Skin::Custom(custom) => return custom.to_string(),/*Some(Path::new(ROUTE_DIR).join(custom))*/
+				
 			}
 		}
 	}
@@ -121,13 +122,15 @@ const BUTTONSEPERATIONX: &isize = &425;
 const BUTTONSEPERATIONY: &isize = &125;
 const BUTTONSIZEX: &isize = &400;//&200;
 const BUTTONSIZEY: &isize = &100;//&200;
+const BORDEROFFSETX: &isize = &16;
+const BORDEROFFSETY: &isize = &25;
 
 fn index_to_button_x(i: isize) -> isize {
-    (i % BUTTONPERROW) * BUTTONSEPERATIONX
+    (i % BUTTONPERROW) * BUTTONSEPERATIONX + (BORDEROFFSETX)
 }
 
 fn index_to_button_y(i: isize) -> isize {
-    (i / BUTTONPERROW) * BUTTONSEPERATIONY
+    (i / BUTTONPERROW) * BUTTONSEPERATIONY + (BORDEROFFSETY)
 }
 
 fn index_to_button_x_y(i: isize) -> (isize, isize) {
@@ -136,11 +139,11 @@ fn index_to_button_x_y(i: isize) -> (isize, isize) {
 }
 
 fn index_to_image_x(i: isize) -> isize {
-    ((i % BUTTONPERROW) * BUTTONSEPERATIONX) - BUTTONSIZEX
+    ((i % BUTTONPERROW) * BUTTONSEPERATIONX) - BUTTONSIZEX + (BORDEROFFSETX)
 }
 
 fn index_to_image_y(i: isize) -> isize {
-    ((i / BUTTONPERROW) * BUTTONSEPERATIONY) - BUTTONSIZEY
+    ((i / BUTTONPERROW) * BUTTONSEPERATIONY) - BUTTONSIZEY + (BORDEROFFSETY)
 }
 
 fn index_to_image_x_y(i: isize) -> (isize, isize) {

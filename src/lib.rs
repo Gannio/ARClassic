@@ -3,18 +3,16 @@
 
 #[macro_use]
 extern crate lazy_static;
-use crate::keyboard::ShowKeyboardArg;
 
 use std::{fs, io::{Error, ErrorKind, Result}, path::{Path, PathBuf}, collections::HashMap, sync::Mutex};
 use rand::Rng;
 use walkdir::WalkDir;
 use arcropolis_api::*;
 
-mod keyboard;
 mod webmenu;
 
-const RANDOMIZE_PATH: &str = "rom:/ClassicModeSelector_FilesToCatch/";
-const FILECHOICE_PATH: &str = "rom:/ClassicModeSelector";
+const RANDOMIZE_PATH: &str = "rom:/ARClassic_FilesToCatch/";
+const FILECHOICE_PATH: &str = "sd:/ultimate/ClassicRoutes";
 
 
 lazy_static! {
@@ -63,20 +61,20 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 		
 		//SKINS.lock().unwrap().set_skins(folders_text);
 		
-		let webOut = webpage.get_file_index();//SKINS.lock().unwrap().get_file_index();
-		println!("{}",webOut.to_string());
+		let web_out = webpage.get_file_index();//SKINS.lock().unwrap().get_file_index();
+		println!("{}",web_out.to_string());
 		
-		if webOut == "*Default"
+		if web_out == "*Default"
 		{
 			return Err(Error::new(ErrorKind::Other, "Default Route"));
 		}
-		else if webOut == "*Random"
+		else if web_out == "*Random"
 		{
 			folder_choice = rng.gen_range(0..folders.len());
 		}
 		else
 		{
-			let output = webpage.skins.iter().position(|s| s == &webOut).unwrap();
+			let output = webpage.skins.iter().position(|s| s == &web_out).unwrap();
 			folder_choice = output;
 		}
 		
@@ -126,10 +124,6 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 	if count <= 0 {
 		return Err(Error::new(ErrorKind::Other, "No Files Found!"))
 	}
-	
-	
-	let display = format!("Enter Classic Mode ID (0-{})", (count-1).to_string());
-	
 	
 	//let mut user_input = ShowKeyboardArg::new().header_text(&display).show().unwrap_or("0".to_string());
 	

@@ -31,14 +31,14 @@
     </style>
 </head>
 <body>
-	<p>TEST TEST TEST</p>
-    <button class="arclassic-skin-button" style="left: 0px; top: 0px;" onclick="location.href='http://localhost/default';">Default</button>
+    <button class="arclassic-skin-button" style="left: 16px; top: 25px;" onclick="location.href='http://localhost/default';">Default</button>
+	
+	<button class="arclassic-skin-button" style="left: {{add_button_left}}px; top: {{add_button_top}}px;" onclick="location.href='http://localhost/random';">Random</button>
     
     {{#skins}}
     <button class="arclassic-skin-button" style="left: {{button_left}}px; top: {{button_top}}px;" onclick="location.href='http://localhost/{{path}}';">{{path}}</button>
     {{/skins}}
-
-    <button class="arclassic-skin-button" style="left: {{add_button_left}}px; top: {{add_button_top}}px;" onclick="location.href='http://localhost/random';">Random</button>
+	
 </body>
 <script>
 	var myClasses = document.getElementsByClassName("arclassic-skin-button");
