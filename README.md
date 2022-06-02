@@ -27,19 +27,19 @@ Once a route has been chosen, it stays until the character's route is unloaded. 
 ## ARClassic Extras
 The folders within ultimate/mod in the Release folder contains new routes for Giga Bowser, Squirtle, Ivysaur, and Charizard. These files are required in order for the program to latch onto these characters, however I've created original routes for them as a bonus! A Character Expansion mod is required in order to experience these routes with their respective characters.
 
-#Squirtle: Explorers of Smash
+### Squirtle: Explorers of Smash
 Team up with your partner (Diddy Kong) on a route inspired by the events of Pokemon Mystery Dungeon: Explorers of Time/Darkness/Sky!
 
-#Ivysaur: A Plant for All Seasons
+### Ivysaur: A Plant for All Seasons
 Ivysaur's route involves fighting through a series of opponents representing the four seasons (with 2 stages per season when including the bonus stage).
 
-#Charizard: The Undefeated Flames of Red and Blue
+### Charizard: Undefeated Flames of Red and Blue
 As the only standalone character present in previous games that is not in Ultimate (as a standalone that is), its route covers a collection of newcomers, stage bosses, and items from Super Smash Bros. for 3DS and Super Smash Bros. for Wii U.
 
-#Giga Bowser Route: The Wrath of Giga Bowser
+### Giga Bowser Route: The Wrath of Giga Bowser
 A route inspired by [The Wrath of Giga Bowser](https://www.youtube.com/watch?v=L1nGBIGKnuU), a machinima from Super Smash Bros. Melee dating back to 2006.
 
-Finally, the add-on mod contains files for the mii fighters should anyone ever figure out how to enable them in the CSS, however they're currently just duplicates of Giga Bowser's route for the purposes of hooking.
+Finally, the add-on mod contains files for the Mii Fighters should anyone ever figure out how to enable them in the CSS, however they're currently just duplicates of Giga Bowser's route for the purposes of hooking.
 
 Credit to Coolsonickirby for his [Arc Randomizer](https://github.com/Coolsonickirby/arc-randomizer), from which this project was built on, and jam1garner's [Smash Minecraft Skins](https://github.com/jam1garner/smash-minecraft-skins), from which UI components were adapted from.
 
