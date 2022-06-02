@@ -20,22 +20,14 @@ lazy_static! {
         let m = HashMap::new();
         Mutex::new(m)
     };  
-	/*static ref SKINS: Mutex<webmenu::Skins> = Mutex::new(
-        webmenu::Skins::init().unwrap_or_default()
-    );*/	
 }
 
 
-pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
+pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
     let mut rng = rand::thread_rng();
 
-
-
-
-
-	
-	let mut folders = HashMap::new();
-	let mut folders_text = vec![];
+	let mut folders = HashMap::new();//Firstly, go through the folders in the route folder to see if we need to perform a folder selection.
+	let mut folders_text = vec![];//Used so that the webapp can actually get the name of the file.
 	
 	for entry in fs::read_dir(FILECHOICE_PATH)?
 	{
@@ -49,22 +41,18 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 		
 	}
 	let mut folder_choice = 0;
-	if folders.len() > 1
+	if folders.len() > 1//If more than a single folder, prompt the user for multiple folders using the wep applet UI.
 	{
 		println!("{}","Many Folders.");
 
-		//webmenu::Skins webpage = webmenu::Skins::init();
-		let mut webpage = webmenu::Skins{
-			skins: folders_text,
+		let mut webpage = webmenu::Routes{
+			routes: folders_text,
 		};
-		//webpage.set_skins();
-		
-		//SKINS.lock().unwrap().set_skins(folders_text);
 		
 		let web_out = webpage.get_file_index();//SKINS.lock().unwrap().get_file_index();
 		println!("{}",web_out.to_string());
 		
-		if web_out == "*Default"
+		if web_out == "*Default"//Use * for special return values as they can never be in a normal file system.
 		{
 			return Err(Error::new(ErrorKind::Other, "Default Route"));
 		}
@@ -74,21 +62,18 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 		}
 		else
 		{
-			let output = webpage.skins.iter().position(|s| s == &web_out).unwrap();
+			let output = webpage.routes.iter().position(|s| s == &web_out).unwrap();//Set the folder choice to the index of the selected choice in the array.
 			folder_choice = output;
 		}
-		
-		
-		/*
-		let folder_text = format!("Enter Folder ID (0-{})", (folders.len()-1).to_string());
-		folder_choice = (ShowKeyboardArg::new().header_text(&folder_text)
-						.show().unwrap_or("0".to_string())).parse::<usize>().unwrap();*/
 	}
 	else if folders.len() <= 0
 	{
 		println!("{}","No folders");
-		//println!("{}","No folders");
-		return Err(Error::new(ErrorKind::Other, "No Folders Found! Please add some to ClassicModeSelector!"))
+		return Err(Error::new(ErrorKind::Other, "No Folders Found! Please add some to \"sd:/ultimate/ClassicRoutes\"!"))
+	}
+	else
+	{
+		println!("{}","Single Folder.");//Assume we are only using the first folder's contents if there's only one.
 	}
 
 	if folder_choice >= folders.len()
@@ -100,7 +85,8 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 	println!("{}",folders.get(&folder_choice).unwrap().to_string());
 
 
-	let mut files = HashMap::new();
+	//Below is pretty much the same as above, but for the files within folders instead of the folders themselves, so follow the comments above for below.
+	let mut files = HashMap::new();//Getting files within the folder now.
 	let mut files_text = vec![];
 	//println!("{}",directory.display());
 	
@@ -125,12 +111,10 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 		return Err(Error::new(ErrorKind::Other, "No Files Found!"))
 	}
 	
-	//let mut user_input = ShowKeyboardArg::new().header_text(&display).show().unwrap_or("0".to_string());
-	
-	let mut webpage = webmenu::Skins{
-			skins: files_text,
+	let mut webpage = webmenu::Routes{
+			routes: files_text,
 		};
-	let mut user_input = webpage.get_file_index();//SKINS.lock().unwrap().get_file_index();
+	let mut user_input = webpage.get_file_index();
 	println!("{}",user_input.to_string());
 	
 	if user_input == "*Default"
@@ -139,34 +123,24 @@ pub fn random_file_select(directory: &Path) -> Result<Vec<String>>{
 	}
 	else if user_input == "*Random"
 	{
-		println!("{}","Random");
 		user_input = rng.gen_range(0..count).to_string();
 	}
 	else
 	{
-		let output = webpage.skins.iter().position(|s| s == &user_input).unwrap();
+		let output = webpage.routes.iter().position(|s| s == &user_input).unwrap();
 		user_input = output.to_string();
 	}
 	
 	
+	let mut file_result = user_input.parse::<usize>().unwrap();
 	
-	if user_input == "R" || user_input == "r"
+	if file_result >= files.len()
 	{
-		println!("{}","Random");
-		user_input = rng.gen_range(0..count).to_string();
+		file_result = 0;
 	}
 	
-	let mut random_result = user_input.parse::<usize>().unwrap();
-	//let random_result = rng.gen_range(0..count);
-	
-	if random_result >= files.len()
-	{
-		//return Err(Error::new(ErrorKind::Other, "File chosen outside range!"))
-		random_result = 0;
-	}
-	
-	println!("{}",files.get(&random_result).unwrap().to_string());
-	Ok(vec![files.get(&random_result).unwrap().to_string(),directory.display().to_string()])
+	println!("{}",files.get(&file_result).unwrap().to_string());
+	Ok(vec![files.get(&file_result).unwrap().to_string(),directory.display().to_string()])
 }
 
 #[arc_callback]
@@ -174,19 +148,14 @@ fn arc_file_callback(hash: u64, data: &mut [u8]) -> Option<usize>{
 	
 	//let ogFile = ;
 	
-    match random_file_select(FILE_HOLDER.lock().unwrap().get(&hash).unwrap()){
+    match classic_file_select(FILE_HOLDER.lock().unwrap().get(&hash).unwrap()){
         Ok(col) => {
 			let s = &col[0];
-			let d = &col[1];
-			println!("{}",s.to_string());
-			println!("{}",d.to_string());
+//			let d = &col[1];
 			
             let file = fs::read(s).unwrap();
-			//let file2 = fs::read(d).unwrap();
 			
 			println!("{:?}",..file.len());
-			//println!("{:?}",..file.len());
-			//println!("{:?}",..file2.len());
             
             // Shoutouts to Genwald
             data[..file.len()].copy_from_slice(&file);
@@ -196,16 +165,6 @@ fn arc_file_callback(hash: u64, data: &mut [u8]) -> Option<usize>{
         Err(_err) => None
     }
 }
-
-/*
-#[stream_callback]
-fn stream_file_callback(hash: u64) -> Option<String>{    
-    match random_file_select(FILE_HOLDER.lock().unwrap().get(&hash).unwrap()){
-        Ok(s) => Some(s),
-        Err(_err) => None
-    }
-}
-*/
 
 
 fn get_biggest_size_from_path(path: &Path) -> usize{
@@ -235,30 +194,28 @@ fn get_biggest_size_from_path(path: &Path) -> usize{
     biggest_size
 }
 
-#[skyline::main(name = "arc-classicmodeselector")]
+#[skyline::main(name = "arclassic")]
 pub fn main() {
     if !Path::new(RANDOMIZE_PATH).exists(){
         return;
     }
-	
+	//println!("Starting");
+	let optionsPath = Path::new(FILECHOICE_PATH);
+	let maxSize = get_biggest_size_from_path(/*&entry.path()*/optionsPath);
     for entry in WalkDir::new(&RANDOMIZE_PATH) {
         let entry = entry.unwrap();
-
         if entry.path().is_dir() && format!("{}", &entry.path().display()).contains("."){
-
-            let path = &format!("{}", &entry.path().display())[RANDOMIZE_PATH.len()..].replace(";", ":").replace(".mp4", ".webm");
-            
+            let path = &format!("{}", &entry.path().display())[RANDOMIZE_PATH.len()..];//.replace(";", ":").replace(".mp4", ".webm"); Last bits we don't need as we aren't using streaming.
+            //println!("Adding {}",path);
             let hash = hash40(path);
             
             FILE_HOLDER.lock().unwrap().insert(hash.as_u64(), entry.path().to_path_buf());
             
-            if path.contains("stream"){//None of these should be stream files.
-                //stream_file_callback::install(hash);
-            }else{
-				let path = Path::new(FILECHOICE_PATH);
-                arc_file_callback::install(hash, get_biggest_size_from_path(/*&entry.path()*/path));
-            }
+			
+			arc_file_callback::install(hash, maxSize);
+			
 
         }
     }
+	//println!("Done");
 }

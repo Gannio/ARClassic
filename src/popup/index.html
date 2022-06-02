@@ -3,19 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArClassic Route Selector</title>
+    <title>ARClassic Route Selector</title>
     <style>
-        .arclassic-skin-display {
-            image-rendering: crisp-edges;
-            image-rendering: -webkit-optimize-contrast;
-            /* crop pos: 8, 8 | size: 8, 8 */
-            position: absolute;
-            width: 1600px;
-            height: 1600px;
-            clip: rect(200px, 400px, 400px, 200px);
-        }
-
-        .arclassic-skin-button {
+        .route-button {
             position: absolute;
             width: 400px;
             height: 100px;
@@ -31,24 +21,24 @@
     </style>
 </head>
 <body>
-    <button class="arclassic-skin-button" style="left: 16px; top: 25px;" onclick="location.href='http://localhost/default';">Default</button>
+    <button class="route-button" style="left: 16px; top: 25px;" onclick="location.href='http://localhost/default';">Default</button>
 	
-	<button class="arclassic-skin-button" style="left: {{add_button_left}}px; top: {{add_button_top}}px;" onclick="location.href='http://localhost/random';">Random</button>
+	<button class="route-button" style="left: {{random_button_left}}px; top: {{random_button_top}}px;" onclick="location.href='http://localhost/random';">Random</button>
     
-    {{#skins}}
-    <button class="arclassic-skin-button" style="left: {{button_left}}px; top: {{button_top}}px;" onclick="location.href='http://localhost/{{path}}';">{{path}}</button>
-    {{/skins}}
+    {{#routes}}
+    <button class="route-button" style="left: {{button_left}}px; top: {{button_top}}px;" onclick="location.href='http://localhost/{{path}}';">{{path}}</button>
+    {{/routes}}
 	
 </body>
-<script>
-	var myClasses = document.getElementsByClassName("arclassic-skin-button");
+<script><!--This is somewhat inefficient and will take a second or two once you hit 1000 entries or so, but it works for now and shows how javascript can be used in webapplets to clean up stuff like this instead-->
+	var myClasses = document.getElementsByClassName("route-button");
 
 	for (var i = 0; i < myClasses.length; i++) {
-		myClasses[i].innerHTML = myClasses[i].innerHTML.replace("rom:", "");//.replace("rom:/ClassicModeSelector/","");
-		myClasses[i].innerHTML = myClasses[i].innerHTML.replace(/^.*[\\\/]/, '');//.replace("rom:/ClassicModeSelector/","");
-		myClasses[i].innerHTML = myClasses[i].innerHTML.replace("standard_route_", "");//.replace("rom:/ClassicModeSelector/","");
-		myClasses[i].innerHTML = myClasses[i].innerHTML.replace(".prc", "");//.replace("rom:/ClassicModeSelector/","");
+		myClasses[i].innerHTML = myClasses[i].innerHTML.replace("sd:", "");//Get rid of the 'drive' directory.
+		myClasses[i].innerHTML = myClasses[i].innerHTML.replace(/^.*[\\\/]/, '');//Get rid of all pathing.
+		myClasses[i].innerHTML = myClasses[i].innerHTML.replace("standard_route_", "");//Custom routes may have different names, but this is meant for the vanilla routes.
+		myClasses[i].innerHTML = myClasses[i].innerHTML.replace(".prc", "");//Remove the extension.
 	}
-	print("Done?");
+	
 </script>
 </html>

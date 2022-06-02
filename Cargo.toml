@@ -1,5 +1,5 @@
 [package]
-name = "arcclassicmodeselector"
+name = "arclassic"
 version = "0.1.0"
 authors = ["gannio <gannioSoftware@gmail.com>", "Ali Hussain (Coolsonickirby/Random) <alihussain2001@gmail.com>", "jam1garner <jam1.mcleod@hotmail.com>"]
 edition = "2018"
