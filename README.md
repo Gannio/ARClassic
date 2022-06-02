@@ -6,17 +6,17 @@
 
 
 ## Setup
-1. Download the latest version from the Releases tab, then extract and install to the root of your SD card.
-2. Using ARCExplorer, extract all files named "standard_route_[NameOfFighter].prc" from "ui/param/standard" and "ui/param_patch_standard" and move them to "sd:/ultimate/ClassicRoutes/Vanilla Routes/" in your SD card.
-3. (Optional) For any additional Classic Mode mods you have, create a folder (or folders, if you have many mods that can be seperated) within "sd:/ultimate/ClassicRoutes/(Whatever you want to name the folder)" to store them in. This will allow you to choose them seperately from the default ones. Note they do not have to be the name of a character's route, so you can rename them to something more representative of the route instead.
-
-You can also add more files to ClassicMode_FilesToCatch to load things beyond Classic Modes in a similar manner, however it's only recommended for things that are loaded by only a single file (as it will prompt you for every file for something such as fighter data).
+1. Download the latest version from the link, then install to the root of your SD card.
+2. Using ARCExplorer, extract all files named standard_route_[NameOfFighter].prc from rom://ui/param/standard and ui/param_patch/standard
+3. Copy the above files to sd://ultimate/ClassicRoutes/Vanilla Routes/.
+4. (Optional) For any additional Classic Mode mods you have, create a folder (or folders, if you have many mods that can be seperated) within sd:/ultimate/ClassicRoutes/(Whatever you want to name the folder) to store the .prc files in. This will allow you to choose them seperately from the default ones. Note they do not have to be the name of a character's route, so you can rename them to something more representative of the route instead.
 
 ## In-Game Usage
-1. Select a character from the Classic Mode menu and begin the route. This will start a web applet.
-2. (This step only applies if you followed #3 above) Select the name corresponding to your folder.
-3. Choose the name corresponding to the file you want to use (See VanillaRoutes.csv for numbers corresponding to the defaults). Alternatively, choose 'Random', to choose randomly, or 'Default' to choose the character's normal route.
-- Some default route names differ from the character's English name (see DefaultRoutes.csv in the source code for a full list).
+Choose a character on the Classic Mode Select screen. This will open a prompt that will let you choose which folder group to use (if more than 1 are present), followed by the specific route. Both prompts also offer a 'Default' button to choose the character's normal route, and a 'Random' button to randomly choose from the current options.
+
+Once a route has been chosen, it stays until the character's route is unloaded. If you want to choose another route with the same character, choose another character first and enter their difficulty select screen, then back out and choose the character you actually want.
+
+- Some default route names differ from the character's English name (see VanillaRoutes.csv in the source code for a full list).
 
 This route will stay until it's unloaded from memory, so to change the route for a character after already choosing, choose another character, then go back after entering the difficulty screen.
 
