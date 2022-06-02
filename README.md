@@ -9,7 +9,7 @@
 1. Download the latest version from the link, then install to the root of your SD card.
 2. Using ARCExplorer, extract all files named standard_route_[NameOfFighter].prc from rom://ui/param/standard and ui/param_patch/standard
 3. Copy the above files to sd://ultimate/ClassicRoutes/Vanilla Routes/.
-4. (Optional) For any additional Classic Mode mods you have, create a folder (or folders, if you have many mods that can be seperated) within sd:/ultimate/ClassicRoutes/(Whatever you want to name the folder) to store the .prc files in. This will allow you to choose them seperately from the default ones. Note they do not have to be the name of a character's route, so you can rename them to something more representative of the route instead.
+4. (Optional) For any additional Classic Mode mods you have, create a folder (or folders, if you have many mods that can be seperated) within sd://ultimate/ClassicRoutes/(Whatever you want to name the folder) to store the .prc files in. This will allow you to choose them seperately from the default ones. Note they do not have to be the name of a character's route, so you can rename them to something more representative of the route instead.
 
 ## In-Game Usage
 Choose a character on the Classic Mode Select screen. This will open a prompt that will let you choose which folder group to use (if more than 1 are present), followed by the specific route. Both prompts also offer a 'Default' button to choose the character's normal route, and a 'Random' button to randomly choose from the current options.
@@ -18,11 +18,11 @@ Once a route has been chosen, it stays until the character's route is unloaded. 
 
 - Some default route names differ from the character's English name (see VanillaRoutes.csv in the source code for a full list).
 
-This route will stay until it's unloaded from memory, so to change the route for a character after already choosing, choose another character, then go back after entering the difficulty screen.
+- This route will stay until it's unloaded from memory. To change the route for a character after already choosing, choose another character, then go back after entering the difficulty screen.
 
-The route will also not change name to reflect the new route (this is because the names are stored seperately from the actual routes).
+- The route will not change name to reflect the new route (this is because the names are stored seperately from the actual routes).
 
-Finally, assist trophy/pokeball odds will *not* change from the character's original route, though normal item distributions will. One notable example is Young Link, who's assist trophies are exclusively Zelda-themed.
+- Assist trophy/pokeball odds will *not* change from the character's original route, though normal item distributions will. One notable example is Young Link, who's assist trophies are exclusively Zelda-themed.
 
 ## ARClassic Extras
 The folders within ultimate/mod in the Release folder contains new routes for Giga Bowser, Squirtle, Ivysaur, and Charizard. These files are required in order for the program to latch onto these characters, however I've created original routes for them as a bonus! A Character Expansion mod is required in order to experience these routes with their respective characters.
