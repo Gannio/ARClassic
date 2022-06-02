@@ -25,7 +25,7 @@ Once a route has been chosen, it stays until the character's route is unloaded. 
 - Assist trophy/pokeball odds will *not* change from the character's original route, though normal item distributions will. One notable example is Young Link, who's assist trophies are exclusively Zelda-themed.
 
 ## ARClassic Extras
-The folders within ultimate/mod in the Release folder contains new routes for Giga Bowser, Squirtle, Ivysaur, and Charizard. These files are required in order for the program to latch onto these characters, however I've created original routes for them as a bonus! A Character Expansion mod is required in order to experience these routes with their respective characters.
+The folders within ultimate/mod in the Release folder contains new routes for Giga Bowser, Squirtle, Ivysaur, and Charizard. These files are required in order for the program to latch onto these characters, so I've created original routes for them as a bonus! A Character Expansion mod is required in order to experience these routes with their respective characters.
 
 ### Squirtle: Explorers of Smash
 Team up with your partner (Diddy Kong) on a route inspired by the events of Pokemon Mystery Dungeon: Explorers of Time/Darkness/Sky!
