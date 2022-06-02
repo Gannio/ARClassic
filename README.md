@@ -25,7 +25,7 @@ The route will also not change name to reflect the new route (this is because th
 Finally, assist trophy/pokeball odds will *not* change from the character's original route, though normal item distributions will. One notable example is Young Link, who's assist trophies are exclusively Zelda-themed.
 
 ## ARClassic Extras
-The folders within ultimate/mod in the Release folder contains new routes for Giga Bowser, Squirtle, Ivysaur, and Charizard. These files are required in order for the program to latch onto these characters, however I've created original routes for them as a bonus!
+The folders within ultimate/mod in the Release folder contains new routes for Giga Bowser, Squirtle, Ivysaur, and Charizard. These files are required in order for the program to latch onto these characters, however I've created original routes for them as a bonus! A Character Expansion mod is required in order to experience these routes with their respective characters.
 
 #Squirtle: Explorers of Smash
 Team up with your partner (Diddy Kong) on a route inspired by the events of Pokemon Mystery Dungeon: Explorers of Time/Darkness/Sky!
@@ -38,8 +38,6 @@ As the only standalone character present in previous games that is not in Ultima
 
 #Giga Bowser Route: The Wrath of Giga Bowser
 A route inspired by [The Wrath of Giga Bowser](https://www.youtube.com/watch?v=L1nGBIGKnuU), a machinima from Super Smash Bros. Melee dating back to 2006.
-
-These routes also included as sample routes within the ClassicRoutes directory, under ARClassic Extras, so that you can play them with seperate characters, though the mod itself should be enabled for item support.
 
 Finally, the add-on mod contains files for the mii fighters should anyone ever figure out how to enable them in the CSS, however they're currently just duplicates of Giga Bowser's route for the purposes of hooking.
 
