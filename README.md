@@ -6,7 +6,7 @@
 
 
 ## Setup
-1. Download the latest version from the Releases tab, then install to the root of your SD card.
+1. Download the latest version from the Releases tab, then extract and install to the root of your SD card.
 2. Using ARCExplorer, extract all files named "standard_route_[NameOfFighter].prc" from "ui/param/standard" and "ui/param_patch_standard" and move them to "sd:/ultimate/ClassicRoutes/Vanilla Routes/" in your SD card.
 3. (Optional) For any additional Classic Mode mods you have, create a folder (or folders, if you have many mods that can be seperated) within "sd:/ultimate/ClassicRoutes/(Whatever you want to name the folder)" to store them in. This will allow you to choose them seperately from the default ones. Note they do not have to be the name of a character's route, so you can rename them to something more representative of the route instead.
 
