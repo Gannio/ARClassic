@@ -68,7 +68,7 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 		else if web_out == "*Random"
 		{
 			folder_choice = rng.gen_range(0..folders.len()+1);
-			if (folder_choice >= folders.len())//Treat the final folder as vanilla.
+			if folder_choice >= folders.len()//Treat the final folder as vanilla.
 			{
 				folder_choice = folders.len();
 				search_internal = true;
@@ -110,9 +110,7 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 
 	if search_internal//Read from internal files, only accept those with proper naming format.
 	{
-			let folder_to_read = &String::from(format!("arc:/"));
-			//println!("{}",folder_to_read); //Seems to crash right after this.
-			//Need to do two runarounds: One for all base-game characters + Pirahana Plant, and another for DLC characters.
+			//Need to do two runarounds: One for all base-game characters, and another for DLC characters.
 			let vanilla = &VANILLA_HOLDER.lock().unwrap();
 			
 			let mut i = 0;
@@ -233,23 +231,60 @@ pub fn main() {
         return;
     }
 	//println!("Starting");
-	let optionsPath = Path::new(FILECHOICE_PATH);
-	let maxSize = get_biggest_size_from_path(/*&entry.path()*/optionsPath);
+	let options_path = Path::new(FILECHOICE_PATH);
+	let mut max_size = get_biggest_size_from_path(/*&entry.path()*/options_path);
 	let mut i = 0;
+	
+	let mut vanilla_max_size = 10000;//Slightly larger than Steve's max size: 8192 bytes.
+	
+	/*Todo: Figure out how to search the files for max size (Does arc:/ not mount until after main is done?).
+	for entry in WalkDir::new(&RANDOMIZE_PATH) {//Set things up to walk the vanilla path.
+        let entry = entry.unwrap();
+        if entry.path().is_dir() && format!("{}", &entry.path().display()).contains("."){
+			
+			let convert_to_vanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
+			
+			let hash = format!("arc:/0x{:x}",hash40(&convert_to_vanilla).as_u64());
+			VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
+			//let this_file = fs::read_dir(&hash);//Path::new(&hash);
+			
+		}
+	}
+	for entry in WalkDir::new("arc:/"){//This is gross but it's crashing if I try it up above by rawly reading the file. Post note: As you can see, this also crashed.
+		let entry = entry.unwrap();
+		if VANILLA_HOLDER.lock().unwrap().contains(&entry.path().display().to_string())
+		{
+			println!("{}",&entry.path().display().to_string());
+			/*
+			let size = entry.path().metadata().unwrap().len() as usize;
+			if size > vanilla_max_size
+			{
+				vanilla_max_size = size;
+				println!("[ARClassic]{}",size);
+			}*/
+		}
+		
+	}*/
+	
+	println!("[ARClassic]Max Size Compare: {}{}", vanilla_max_size,max_size);
+	if vanilla_max_size > max_size
+	{
+		max_size = vanilla_max_size;
+	}
+	
     for entry in WalkDir::new(&RANDOMIZE_PATH) {
         let entry = entry.unwrap();
         if entry.path().is_dir() && format!("{}", &entry.path().display()).contains("."){
             let path = &format!("{}", &entry.path().display())[RANDOMIZE_PATH.len()..];//.replace(";", ":").replace(".mp4", ".webm"); Last bits we don't need as we aren't using streaming.
             //println!("Adding {}",path);
             let hash = hash40(path);
-            
-            FILE_HOLDER.lock().unwrap().insert(hash.as_u64(), entry.path().to_path_buf());
-            
-			let convToVanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
 			
-			VANILLA_HOLDER.lock().unwrap().insert(i,convToVanilla);
+			FILE_HOLDER.lock().unwrap().insert(hash.as_u64(), entry.path().to_path_buf());
+			
+			let convert_to_vanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
+			VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
 			i = i+1;
-			arc_file_callback::install(hash, maxSize);
+			arc_file_callback::install(hash, max_size);
 			
 
         }
