@@ -223,11 +223,29 @@ fn get_biggest_size_from_path(path: &Path) -> usize{
 
     biggest_size
 }
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub enum Event {
+	ArcFilesystemMounted,
+	ModFilesystemMounted,
+}
 
+pub type EventCallbackFn = extern "C" fn(Event);
 
-#[skyline::main(name = "arclassic")]
-pub fn main() {
-    if !Path::new(RANDOMIZE_PATH).exists(){
+extern "C" {
+	fn arcrop_register_event_callback(ty: Event, callback: EventCallbackFn);
+}
+
+pub extern "C" fn test(event: Event) {
+	
+	init();
+	
+  return
+}
+
+pub fn init()
+{
+	if !Path::new(RANDOMIZE_PATH).exists(){
         return;
     }
 	//println!("Starting");
@@ -235,33 +253,66 @@ pub fn main() {
 	let mut max_size = get_biggest_size_from_path(/*&entry.path()*/options_path);
 	let mut i = 0;
 	
-	let mut vanilla_max_size = 10000;//Slightly larger than Steve's max size: 8192 bytes.
+	let mut vanilla_max_size = 0;//Slightly larger than Steve's max size: 8192 bytes.
 	
-	/*Todo: Figure out how to search the files for max size (Does arc:/ not mount until after main is done?).
+	//Todo: Figure out how to search the files for max size (Does arc:/ not mount until after main is done?).
 	for entry in WalkDir::new(&RANDOMIZE_PATH) {//Set things up to walk the vanilla path.
         let entry = entry.unwrap();
         if entry.path().is_dir() && format!("{}", &entry.path().display()).contains("."){
 			
 			let convert_to_vanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
 			
+			let stupid = format!("arc:/{}",convert_to_vanilla);//str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
+			
 			let hash = format!("arc:/0x{:x}",hash40(&convert_to_vanilla).as_u64());
 			VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
+			
+			let mut path = Path::new(&hash);//VANILLA_HOLDER.lock().unwrap()[i].as_str());
+			
+			if !path.exists()
+			{
+				//let stupid = &str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
+				path = Path::new(&stupid);
+				
+				//path = Path::new(&VANILLA_HOLDER.lock().unwrap()[i].as_str());
+				if (path.exists())
+				{
+					println!("{}",path.display());
+				}
+				else
+				{
+					println!("NoExist{}",path.display());
+				}
+				continue;
+			}
+			else{
+				println!("{}{}",VANILLA_HOLDER.lock().unwrap()[i].as_str(),path.display());
+			}
+			
+			
+			let file = fs::read(path).unwrap();
+			let size = file.len() as usize;
+			if size > vanilla_max_size
+			{
+				vanilla_max_size = size;
+				println!("[ARClassic]{}",size);
+			}
 			//let this_file = fs::read_dir(&hash);//Path::new(&hash);
 			
 		}
 	}
-	for entry in WalkDir::new("arc:/"){//This is gross but it's crashing if I try it up above by rawly reading the file. Post note: As you can see, this also crashed.
+	/*for entry in WalkDir::new("arc:/"){//This is gross but it's crashing if I try it up above by rawly reading the file. Post note: As you can see, this also crashed.
 		let entry = entry.unwrap();
 		if VANILLA_HOLDER.lock().unwrap().contains(&entry.path().display().to_string())
 		{
 			println!("{}",&entry.path().display().to_string());
-			/*
+			
 			let size = entry.path().metadata().unwrap().len() as usize;
 			if size > vanilla_max_size
 			{
 				vanilla_max_size = size;
 				println!("[ARClassic]{}",size);
-			}*/
+			}
 		}
 		
 	}*/
@@ -271,7 +322,6 @@ pub fn main() {
 	{
 		max_size = vanilla_max_size;
 	}
-	
     for entry in WalkDir::new(&RANDOMIZE_PATH) {
         let entry = entry.unwrap();
         if entry.path().is_dir() && format!("{}", &entry.path().display()).contains("."){
@@ -281,8 +331,8 @@ pub fn main() {
 			
 			FILE_HOLDER.lock().unwrap().insert(hash.as_u64(), entry.path().to_path_buf());
 			
-			let convert_to_vanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
-			VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
+			//let convert_to_vanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
+			//VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
 			i = i+1;
 			arc_file_callback::install(hash, max_size);
 			
@@ -290,4 +340,13 @@ pub fn main() {
         }
     }
 	//println!("Done");
+	
+}
+
+
+#[skyline::main(name = "arclassic")]
+pub fn main() {
+    unsafe {
+        arcrop_register_event_callback(Event::ArcFilesystemMounted, test);
+    }
 }
