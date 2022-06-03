@@ -108,16 +108,20 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 	
 	
 
-	if search_internal//Read from internal files, only accept those with proper naming format.
+	if search_internal//Read from internal files.
 	{
-			//Need to do two runarounds: One for all base-game characters, and another for DLC characters.
 			let vanilla = &VANILLA_HOLDER.lock().unwrap();
 			
 			let mut i = 0;
 			while i < vanilla.len()
 			{
-				let value = format!("arc:/0x{:x}",hash40(&vanilla[i]).as_u64());
-				//println!("{};{}",vanilla[i], value);//mak
+				let mut value = format!("arc:/0x{:x}",hash40(&vanilla[i]).as_u64());
+				if (!Path::new(&value).exists())//Switch to mod mount if it doesn't exist in arc mount. Currently this hangs?
+				{
+					println!("[ARClassic]Switch to mods.");
+					value = format!("mods:/{}",&vanilla[i]);
+				}
+				println!("[ARClassic]{};{}",vanilla[i], value);//mak
 				files.insert(files.len(), value);
 				files_text.insert(files_text.len(), format!("{}", vanilla[i]));
 				i = i+1;
@@ -262,9 +266,9 @@ pub fn init()
 			
 			let convert_to_vanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
 			
-			let stupid = format!("arc:/{}",convert_to_vanilla);//str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
 			
-			let hash = format!("arc:/0x{:x}",hash40(&convert_to_vanilla).as_u64());
+			
+			let mut hash = format!("arc:/0x{:x}",hash40(&convert_to_vanilla).as_u64());
 			VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
 			
 			let mut path = Path::new(&hash);//VANILLA_HOLDER.lock().unwrap()[i].as_str());
@@ -272,26 +276,24 @@ pub fn init()
 			if !path.exists()
 			{
 				//let stupid = &str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
-				path = Path::new(&stupid);
+				hash = format!("mods:/{}",VANILLA_HOLDER.lock().unwrap()[i].to_string());//str::replace(&hash,"arc:/","mods:/");//format!("mods:/{}",hash40(&convert_to_vanilla).as_u64());//str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
+				path = Path::new(&hash);
 				
 				//path = Path::new(&VANILLA_HOLDER.lock().unwrap()[i].as_str());
-				if (path.exists())
+				if !path.exists()
 				{
-					println!("{}",path.display());
+					println!("[ARClassic] ERROR! NoExist!{}{}",hash,path.display());
+					continue;
 				}
-				else
-				{
-					println!("NoExist{}",path.display());
-				}
-				continue;
-			}
-			else{
-				println!("{}{}",VANILLA_HOLDER.lock().unwrap()[i].as_str(),path.display());
+				//continue;
 			}
 			
 			
 			let file = fs::read(path).unwrap();
 			let size = file.len() as usize;
+			
+			println!("[ARClassic]{} {} {}",VANILLA_HOLDER.lock().unwrap()[i].as_str(),path.display(),size);
+			
 			if size > vanilla_max_size
 			{
 				vanilla_max_size = size;
@@ -317,10 +319,11 @@ pub fn init()
 		
 	}*/
 	
-	println!("[ARClassic]Max Size Compare: {}{}", vanilla_max_size,max_size);
+	println!("[ARClassic]Max Size Compare: {}, {}", vanilla_max_size,max_size);
 	if vanilla_max_size > max_size
 	{
 		max_size = vanilla_max_size;
+		println!("[ARClassic]Vanilla size chosen");
 	}
     for entry in WalkDir::new(&RANDOMIZE_PATH) {
         let entry = entry.unwrap();
@@ -347,6 +350,6 @@ pub fn init()
 #[skyline::main(name = "arclassic")]
 pub fn main() {
     unsafe {
-        arcrop_register_event_callback(Event::ArcFilesystemMounted, test);
+        arcrop_register_event_callback(Event::ModFilesystemMounted, test);
     }
 }
