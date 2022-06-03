@@ -49,9 +49,9 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 	let mut folder_choice = 0;
 	let mut search_internal = false;
 	let mut ishub = true;//Currently, this is just to have the HTML page know whether to change the name of the default button or not.
-	if folders.len() > 1//If more than a single folder, prompt the user for multiple folders using the wep applet UI.
+	if folders.len() > 0//If more than a single folder, prompt the user for multiple folders using the wep applet UI.
 	{
-		println!("[ARClassic]{}","Many Folders.");
+		println!("[ARClassic]{}","At least 1 folder.");
 
 		let mut webpage = webmenu::Routes{
 			routes: folders_text, ishub
@@ -67,7 +67,12 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 		}
 		else if web_out == "*Random"
 		{
-			folder_choice = rng.gen_range(0..folders.len());
+			folder_choice = rng.gen_range(0..folders.len()+1);
+			if (folder_choice >= folders.len())//Treat the final folder as vanilla.
+			{
+				folder_choice = folders.len();
+				search_internal = true;
+			}
 		}
 		else
 		{
@@ -75,14 +80,10 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 			folder_choice = output;
 		}
 	}
-	else if folders.len() <= 0
+	else if folders.len() == 0
 	{
-		println!("[ARClassic]{}","No folders");
-		return Err(Error::new(ErrorKind::Other, "No Folders Found! Please add some to \"sd:/ultimate/ClassicRoutes\"!"))
-	}
-	else
-	{
-		println!("[ARClassic]{}","Single Folder.");//Assume we are only using the first folder's contents if there's only one.
+		println!("[ARClassic]{}","No folders.");//Assume we are only using the vanilla folder's contents if there's only one.
+		search_internal = true;
 	}
 
 	if folder_choice >= folders.len()
