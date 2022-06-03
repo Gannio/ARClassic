@@ -115,15 +115,17 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 			let mut i = 0;
 			while i < vanilla.len()
 			{
-				let mut value = format!("arc:/0x{:x}",hash40(&vanilla[i]).as_u64());
-				if (!Path::new(&value).exists())//Switch to mod mount if it doesn't exist in arc mount. Currently this hangs?
-				{
+				let mut value = format!("mods:/{}",&vanilla[i]);
+				if (!Path::new(&value).exists())//Switch to vanilla mount if it doesn't exist in arc mount. We have to do this backward from what you expect otherwise 3.4.0 will crash.
+				{//I should also note this is kind of a 'hope and pray' until we can get 4.0.0 to double check but can't check for exists rn so...eh.
 					println!("[ARClassic]Switch to mods.");
-					value = format!("mods:/{}",&vanilla[i]);
+					value = format!("arc:/0x{:x}",hash40(&vanilla[i]).as_u64());
+					
 				}
 				println!("[ARClassic]{};{}",vanilla[i], value);//mak
 				files.insert(files.len(), value);
 				files_text.insert(files_text.len(), format!("{}", vanilla[i]));
+				
 				i = i+1;
 			}
 	}
@@ -186,6 +188,7 @@ fn arc_file_callback(hash: u64, data: &mut [u8]) -> Option<usize>{
         Ok(col) => {
 			let s = &col[0];
 //			let d = &col[1];
+			println!("[ARClassic]Reading...{}",s);
 			
             let file = fs::read(s).unwrap();
 			
@@ -240,15 +243,10 @@ extern "C" {
 	fn arcrop_register_event_callback(ty: Event, callback: EventCallbackFn);
 }
 
-pub extern "C" fn test(event: Event) {
-	
-	init();
-	
-  return
-}
 
-pub fn init()
-{
+
+pub extern "C" fn init(event: Event) {
+	
 	if !Path::new(RANDOMIZE_PATH).exists(){
         return;
     }
@@ -262,32 +260,52 @@ pub fn init()
 	//Todo: Figure out how to search the files for max size (Does arc:/ not mount until after main is done?).
 	for entry in WalkDir::new(&RANDOMIZE_PATH) {//Set things up to walk the vanilla path.
         let entry = entry.unwrap();
+		
         if entry.path().is_dir() && format!("{}", &entry.path().display()).contains("."){
 			
 			let convert_to_vanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
 			
 			
+			//Mod file setup.
 			
-			let mut hash = format!("arc:/0x{:x}",hash40(&convert_to_vanilla).as_u64());
-			VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
 			
-			let mut path = Path::new(&hash);//VANILLA_HOLDER.lock().unwrap()[i].as_str());
+			let stupid = &str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
+			//hash = format!("mods:/0x{:x}",hash40(&stupid).as_u64());
+			let mut hash = format!("mods:/{}",stupid);
+			//str::replace(&hash,"arc:/","mods:/");//format!("mods:/{}",hash40(&convert_to_vanilla).as_u64());//str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
+			let mut path = Path::new(&hash);
+			//mod file setup end.
+			
+			
+			
+			
+			//end of vanilla setup.
+			
+			
+			println!("{}",entry.path().display());
+			if !path.exists()
+			{
+				println!("{}",hash);
+				//Vanilla file setup.
+				hash = format!("arc:/0x{:x}",hash40(&convert_to_vanilla).as_u64());
+				VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
+				
+				path = Path::new(&hash);//VANILLA_HOLDER.lock().unwrap()[i].as_str());
+				//path = Path::new(&VANILLA_HOLDER.lock().unwrap()[i].as_str());
+				
+				//continue;
+			}
+			else
+			{
+				VANILLA_HOLDER.lock().unwrap().insert(i,stupid.to_string());
+			}
+			
 			
 			if !path.exists()
 			{
-				//let stupid = &str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
-				hash = format!("mods:/{}",VANILLA_HOLDER.lock().unwrap()[i].to_string());//str::replace(&hash,"arc:/","mods:/");//format!("mods:/{}",hash40(&convert_to_vanilla).as_u64());//str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
-				path = Path::new(&hash);
-				
-				//path = Path::new(&VANILLA_HOLDER.lock().unwrap()[i].as_str());
-				if !path.exists()
-				{
-					println!("[ARClassic] ERROR! NoExist!{}{}",hash,path.display());
-					continue;
-				}
-				//continue;
+				println!("[ARClassic] ERROR! NoExist!{}{}",hash,path.display());
+				continue;
 			}
-			
 			
 			let file = fs::read(path).unwrap();
 			let size = file.len() as usize;
@@ -343,13 +361,16 @@ pub fn init()
         }
     }
 	//println!("Done");
-	
+	return;
 }
+pub extern "C" fn readRoute(event: Event) {
+	
 
+}
 
 #[skyline::main(name = "arclassic")]
 pub fn main() {
     unsafe {
-        arcrop_register_event_callback(Event::ModFilesystemMounted, test);
+        arcrop_register_event_callback(Event::ModFilesystemMounted, init);
     }
 }
