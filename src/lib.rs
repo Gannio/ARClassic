@@ -15,11 +15,17 @@ const RANDOMIZE_PATH: &str = "rom:/ARClassic_FilesToCatch/";
 const FILECHOICE_PATH: &str = "sd:/ultimate/ClassicRoutes";
 
 
+
+
 lazy_static! {
     static ref FILE_HOLDER: Mutex<HashMap<u64, PathBuf>> = {
         let m = HashMap::new();
         Mutex::new(m)
     };  
+}
+
+lazy_static! {
+    static ref VANILLA_HOLDER: Mutex<Vec<String>> = Mutex::new(vec![]);
 }
 
 
@@ -41,20 +47,23 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 		
 	}
 	let mut folder_choice = 0;
+	let mut search_internal = false;
+	let mut ishub = true;//Currently, this is just to have the HTML page know whether to change the name of the default button or not.
 	if folders.len() > 1//If more than a single folder, prompt the user for multiple folders using the wep applet UI.
 	{
-		println!("{}","Many Folders.");
+		println!("[ARClassic]{}","Many Folders.");
 
 		let mut webpage = webmenu::Routes{
-			routes: folders_text,
+			routes: folders_text, ishub
 		};
 		
 		let web_out = webpage.get_file_index();//SKINS.lock().unwrap().get_file_index();
-		println!("{}",web_out.to_string());
+		//println!("{}",web_out.to_string());
 		
 		if web_out == "*Default"//Use * for special return values as they can never be in a normal file system.
 		{
-			return Err(Error::new(ErrorKind::Other, "Default Route"));
+			folder_choice = folders.len();
+			search_internal = true;//folder_choice = -2;//Special case to read from the in-game files.
 		}
 		else if web_out == "*Random"
 		{
@@ -68,12 +77,12 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 	}
 	else if folders.len() <= 0
 	{
-		println!("{}","No folders");
+		println!("[ARClassic]{}","No folders");
 		return Err(Error::new(ErrorKind::Other, "No Folders Found! Please add some to \"sd:/ultimate/ClassicRoutes\"!"))
 	}
 	else
 	{
-		println!("{}","Single Folder.");//Assume we are only using the first folder's contents if there's only one.
+		println!("[ARClassic]{}","Single Folder.");//Assume we are only using the first folder's contents if there's only one.
 	}
 
 	if folder_choice >= folders.len()
@@ -81,8 +90,8 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 		folder_choice = 0;
 	}
 
-	println!("{}",folder_choice);
-	println!("{}",folders.get(&folder_choice).unwrap().to_string());
+	println!("[ARClassic]{}",folder_choice);
+	println!("[ARClassic]{}",folders.get(&folder_choice).unwrap().to_string());
 
 
 	//Below is pretty much the same as above, but for the files within folders instead of the folders themselves, so follow the comments above for below.
@@ -96,26 +105,48 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 	
 	
 	
-	for entry in fs::read_dir(/*directory*/folders.get(&folder_choice).unwrap().to_string())? {
-		let entry = entry?;
-		let path = entry.path();
-		if !&path.is_dir() {
-			files.insert(files.len(), format!("{}", path.display()));
-			files_text.insert(files_text.len(), format!("{}", path.display()));
+	
+
+	if search_internal//Read from internal files, only accept those with proper naming format.
+	{
+			let folder_to_read = &String::from(format!("arc:/"));
+			//println!("{}",folder_to_read); //Seems to crash right after this.
+			//Need to do two runarounds: One for all base-game characters + Pirahana Plant, and another for DLC characters.
+			let vanilla = &VANILLA_HOLDER.lock().unwrap();
+			
+			let mut i = 0;
+			while i < vanilla.len()
+			{
+				let value = format!("arc:/0x{:x}",hash40(&vanilla[i]).as_u64());
+				//println!("{};{}",vanilla[i], value);//mak
+				files.insert(files.len(), value);
+				files_text.insert(files_text.len(), format!("{}", vanilla[i]));
+				i = i+1;
+			}
+	}
+	else
+	{
+		for entry in fs::read_dir(/*directory*/&folders.get(&folder_choice).unwrap().to_string())? {
+			let entry = entry?;
+			let path = entry.path();
+			if !&path.is_dir() {
+				files.insert(files.len(), format!("{}", path.display()));
+				files_text.insert(files_text.len(), format!("{}", path.display()));
+			}
 		}
 	}
-
+	println!("[ARClassic]File acquisition finished.");
 	let count = files.len();
 
 	if count <= 0 {
 		return Err(Error::new(ErrorKind::Other, "No Files Found!"))
 	}
-	
+	ishub = false;
 	let mut webpage = webmenu::Routes{
-			routes: files_text,
+			routes: files_text,ishub
 		};
 	let mut user_input = webpage.get_file_index();
-	println!("{}",user_input.to_string());
+	println!("[ARClassic]{}",user_input.to_string());
 	
 	if user_input == "*Default"
 	{
@@ -139,7 +170,7 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 		file_result = 0;
 	}
 	
-	println!("{}",files.get(&file_result).unwrap().to_string());
+	println!("[ARClassic]{}",files.get(&file_result).unwrap().to_string());
 	Ok(vec![files.get(&file_result).unwrap().to_string(),directory.display().to_string()])
 }
 
@@ -155,7 +186,7 @@ fn arc_file_callback(hash: u64, data: &mut [u8]) -> Option<usize>{
 			
             let file = fs::read(s).unwrap();
 			
-			println!("{:?}",..file.len());
+			println!("[ARClassic]{:?}",..file.len());
             
             // Shoutouts to Genwald
             data[..file.len()].copy_from_slice(&file);
@@ -194,6 +225,7 @@ fn get_biggest_size_from_path(path: &Path) -> usize{
     biggest_size
 }
 
+
 #[skyline::main(name = "arclassic")]
 pub fn main() {
     if !Path::new(RANDOMIZE_PATH).exists(){
@@ -202,6 +234,7 @@ pub fn main() {
 	//println!("Starting");
 	let optionsPath = Path::new(FILECHOICE_PATH);
 	let maxSize = get_biggest_size_from_path(/*&entry.path()*/optionsPath);
+	let mut i = 0;
     for entry in WalkDir::new(&RANDOMIZE_PATH) {
         let entry = entry.unwrap();
         if entry.path().is_dir() && format!("{}", &entry.path().display()).contains("."){
@@ -211,7 +244,10 @@ pub fn main() {
             
             FILE_HOLDER.lock().unwrap().insert(hash.as_u64(), entry.path().to_path_buf());
             
+			let convToVanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
 			
+			VANILLA_HOLDER.lock().unwrap().insert(i,convToVanilla);
+			i = i+1;
 			arc_file_callback::install(hash, maxSize);
 			
 

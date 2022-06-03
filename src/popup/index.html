@@ -30,14 +30,17 @@
     {{/routes}}
 	
 </body>
-<script><!--This is somewhat inefficient and will take a second or two once you hit 1000 entries or so, but it works for now and shows how javascript can be used in webapplets to clean up stuff like this instead-->
+<script>//This is somewhat inefficient and will take a second or two once you hit 1000 entries or so, but it works for now and shows how javascript can be used in webapplets to clean up stuff like this instead.
 	var myClasses = document.getElementsByClassName("route-button");
 
+	if ({{ishub}})
+	{
+		myClasses[0].innerHTML = "Vanilla Routes";
+	}
+	
 	for (var i = 0; i < myClasses.length; i++) {
-		myClasses[i].innerHTML = myClasses[i].innerHTML.replace("sd:", "");//Get rid of the 'drive' directory.
-		myClasses[i].innerHTML = myClasses[i].innerHTML.replace(/^.*[\\\/]/, '');//Get rid of all pathing.
+		myClasses[i].innerHTML = myClasses[i].innerHTML.match(/^.*?([^\\/.]*)[^\\/]*$/)[1];//.split(/(\\|\/)/g).pop();//replace("sd:", "");//Get rid of all pathing.
 		myClasses[i].innerHTML = myClasses[i].innerHTML.replace("standard_route_", "");//Custom routes may have different names, but this is meant for the vanilla routes.
-		myClasses[i].innerHTML = myClasses[i].innerHTML.replace(".prc", "");//Remove the extension.
 	}
 	
 </script>

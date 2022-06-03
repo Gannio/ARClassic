@@ -16,6 +16,7 @@ const LOCALHOST: &str = "http://localhost/";
 #[derive(Default)]
 pub struct Routes {
     pub routes: Vec<String>,
+	pub ishub: bool,
 //    route_files: Vec<PathBuf>,
 }
 
@@ -31,6 +32,7 @@ struct Rendered<'a> {
     routes: Vec<RouteIcon<'a>>,
     random_button_left: isize,
     random_button_top: isize,
+	ishub: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -49,6 +51,8 @@ impl Routes {
 		
         let (random_button_left, random_button_top) = index_to_button_x_y(i);
 		
+		let ishub = self.ishub;
+		
 		i += 1;
 		
         for route in &self.routes {
@@ -57,6 +61,7 @@ impl Routes {
                 path: &route,
                 button_left,
                 button_top,
+				
             });
 
             i += 1;
@@ -64,7 +69,7 @@ impl Routes {
 
         
 
-        Rendered { routes, random_button_left, random_button_top }
+        Rendered { routes, random_button_left, random_button_top, ishub}
     }
 	
 	fn to_html(&self) -> String {
