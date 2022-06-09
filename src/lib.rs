@@ -118,14 +118,16 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 				let mut value = format!("mods:/{}",&vanilla[i]);
 				if (!Path::new(&value).exists())//Switch to vanilla mount if it doesn't exist in arc mount. We have to do this backward from what you expect otherwise 3.4.0 will crash.
 				{//I should also note this is kind of a 'hope and pray' until we can get 4.0.0 to double check but can't check for exists rn so...eh.
-					println!("[ARClassic]Switch to mods.");
+					println!("[ARClassic]Switch to vanilla.");
 					value = format!("arc:/0x{:x}",hash40(&vanilla[i]).as_u64());
-					
+					files.insert(files.len(), value);
+					files_text.insert(files_text.len(), format!("{}", vanilla[i]));
 				}
-				println!("[ARClassic]{};{}",vanilla[i], value);//mak
-				files.insert(files.len(), value);
-				files_text.insert(files_text.len(), format!("{}", vanilla[i]));
-				
+				else
+				{
+					println!("[ARClassic]{};{}",vanilla[i], value);//mak
+					//Todo: fix this to include the new files when 4.0.0 comes out. For now, exclude internal files as we use thie dumb auto-write workaround.
+				}
 				i = i+1;
 			}
 	}
@@ -279,28 +281,45 @@ pub extern "C" fn init(event: Event) {
 			
 			
 			
-			//end of vanilla setup.
+			
 			
 			
 			println!("{}",entry.path().display());
 			if !path.exists()
 			{
-				println!("{}",hash);
 				//Vanilla file setup.
 				hash = format!("arc:/0x{:x}",hash40(&convert_to_vanilla).as_u64());
 				VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
-				
+				i = i+1;
 				path = Path::new(&hash);//VANILLA_HOLDER.lock().unwrap()[i].as_str());
 				//path = Path::new(&VANILLA_HOLDER.lock().unwrap()[i].as_str());
-				
+				//end of vanilla setup.
 				//continue;
 			}
 			else
 			{
+				
 				VANILLA_HOLDER.lock().unwrap().insert(i,stupid.to_string());
+				//let file = fs::read(VANILLA_HOLDER.lock().unwrap()[i]);
+				
+				
+				//Todo: Remove this part, it's a workaround until 4.0.0 comes out.
+				let dumbFileName = format!("mods:/{}",&VANILLA_HOLDER.lock().unwrap()[i]);
+				let dumbFile = fs::read(&dumbFileName).unwrap();
+				let dumbOutputFile = format!("{}{}","sd:/ultimate/ClassicRoutes/Added Routes (Temp)/",Path::new(&dumbFileName).file_name().unwrap().to_os_string().into_string().unwrap());
+				println!("{}",&dumbOutputFile);
+				
+				//fs::File::create(&dumbOutputFile).expect("Couldn't create file");
+				//fs::write("sd:/ultimate/ClassicRoutes/Mod Routes/standard_route_koopag.prc","").expect("Dummy write failed.");
+				fs::create_dir_all("sd:/ultimate/ClassicRoutes/Added Routes (Temp)/");
+				std::fs::write(&dumbOutputFile,dumbFile).expect("Couldn't copy files! Is the SD card full?");
+				
+				
+				//End of Todo
+				i = i+1;
 			}
-			
-			
+			println!("{}",hash);
+			//println!("[ARClassic]{} {} {}",VANILLA_HOLDER.lock().unwrap()[i].as_str(),path.display(),size);
 			if !path.exists()
 			{
 				println!("[ARClassic] ERROR! NoExist!{}{}",hash,path.display());
@@ -310,7 +329,7 @@ pub extern "C" fn init(event: Event) {
 			let file = fs::read(path).unwrap();
 			let size = file.len() as usize;
 			
-			println!("[ARClassic]{} {} {}",VANILLA_HOLDER.lock().unwrap()[i].as_str(),path.display(),size);
+			
 			
 			if size > vanilla_max_size
 			{
@@ -354,7 +373,7 @@ pub extern "C" fn init(event: Event) {
 			
 			//let convert_to_vanilla = str::replace(&entry.path().display().to_string(),RANDOMIZE_PATH,"");
 			//VANILLA_HOLDER.lock().unwrap().insert(i,convert_to_vanilla);
-			i = i+1;
+			
 			arc_file_callback::install(hash, max_size);
 			
 
