@@ -12,7 +12,7 @@ use arcropolis_api::*;
 mod webmenu;
 
 const RANDOMIZE_PATH: &str = "rom:/ARClassic_FilesToCatch/";
-const FILECHOICE_PATH: &str = "sd:/ultimate/ClassicRoutes";
+const FILECHOICE_PATH: &str = "sd:/ultimate/Classic Routes";
 
 
 
@@ -136,7 +136,7 @@ pub fn classic_file_select(directory: &Path) -> Result<Vec<String>>{
 		for entry in fs::read_dir(/*directory*/&folders.get(&folder_choice).unwrap().to_string())? {
 			let entry = entry?;
 			let path = entry.path();
-			if !&path.is_dir() {
+			if !&path.is_dir() && path.display().to_string().contains(".prc") {
 				files.insert(files.len(), format!("{}", path.display()));
 				files_text.insert(files_text.len(), format!("{}", path.display()));
 			}
@@ -306,12 +306,12 @@ pub extern "C" fn init(event: Event) {
 				//Todo: Remove this part, it's a workaround until 4.0.0 comes out.
 				let dumbFileName = format!("mods:/{}",&VANILLA_HOLDER.lock().unwrap()[i]);
 				let dumbFile = fs::read(&dumbFileName).unwrap();
-				let dumbOutputFile = format!("{}{}","sd:/ultimate/ClassicRoutes/Added Routes (Temp)/",Path::new(&dumbFileName).file_name().unwrap().to_os_string().into_string().unwrap());
+				let dumbOutputFile = format!("{}{}","sd:/ultimate/Classic Routes/Added Routes (Temp)/",Path::new(&dumbFileName).file_name().unwrap().to_os_string().into_string().unwrap());
 				println!("{}",&dumbOutputFile);
 				
 				//fs::File::create(&dumbOutputFile).expect("Couldn't create file");
-				//fs::write("sd:/ultimate/ClassicRoutes/Mod Routes/standard_route_koopag.prc","").expect("Dummy write failed.");
-				fs::create_dir_all("sd:/ultimate/ClassicRoutes/Added Routes (Temp)/");
+				//fs::write("sd:/ultimate/Classic Routes/Mod Routes/standard_route_koopag.prc","").expect("Dummy write failed.");
+				fs::create_dir_all("sd:/ultimate/Classic Routes/Added Routes (Temp)/");
 				std::fs::write(&dumbOutputFile,dumbFile).expect("Couldn't copy files! Is the SD card full?");
 				
 				
