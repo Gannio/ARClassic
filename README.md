@@ -7,7 +7,7 @@
 
 ## Setup
 1. Download the latest version from the link, then install to the root of your SD card.
-2. (Optional) For any additional Classic Mode mods you have, create a folder (or folders, if you have many mods that can be seperated) within sd://ultimate/ClassicRoutes/(Whatever you want to name the folder) to store the .prc files in. Note they do not have to be the name of a character's route, so you can rename them to something more representative of the route instead.
+2. (Optional) For any additional Classic Mode mods you have, create a folder (or folders, if you have many mods that can be seperated) within sd://ultimate/Classic Routes/(Whatever you want to name the folder) to store the .prc files in. Note they do not have to be the name of a character's route, so you can rename them to something more representative of the route instead.
 
 ## In-Game Usage
 Choose a character on the Classic Mode Select screen. This will open a prompt that will let you choose which folder group to use (if more than 1 are present), followed by the specific route. Choose 'Random' to randomly choose from the current options.
