@@ -39,6 +39,6 @@ A route inspired by [The Wrath of Giga Bowser](https://www.youtube.com/watch?v=L
 
 Finally, the add-on mod contains files for the Mii Fighters should anyone ever figure out how to enable them in the CSS, however they're currently just duplicates of Giga Bowser's route for the purposes of hooking.
 
-Credit to Coolsonickirby for his [Arc Randomizer](https://github.com/Coolsonickirby/arc-randomizer), from which this project was built on, and jam1garner's [Smash Minecraft Skins](https://github.com/jam1garner/smash-minecraft-skins), from which UI components were adapted from.
+Credit to Coolsonickirby for his [Arc Randomizer](https://github.com/Coolsonickirby/arc-randomizer), from which this project was built on, jam1garner's [Smash Minecraft Skins](https://github.com/jam1garner/smash-minecraft-skins), from which UI components were adapted from, and jozz, who helped implement automatic retrieval of vanilla files.
 
 Note: This mod is *potentially not Wi-Fi safe*. This mostly comes down to the fact that Global Smash Power is an online element, and I can't say for certain whether a higher-than-normal GSP score on a Classic Mode route will result in a ban. Extra characters seem to not save their scores, however I don't have enough knowledge to confirm this. If you want to absolutely avoid a ban, I would recommend using a separate save file that you don't intend to go online with (and an emuMMC but that's for modding in general).
