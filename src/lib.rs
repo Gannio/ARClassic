@@ -284,7 +284,7 @@ pub extern "C" fn init(event: Event) {
 			
 			
 			
-			println!("{}",entry.path().display());
+			println!("[ARClassic]{}",entry.path().display());
 			if !path.exists()
 			{
 				//Vanilla file setup.
@@ -307,7 +307,7 @@ pub extern "C" fn init(event: Event) {
 				let dumbFileName = format!("mods:/{}",&VANILLA_HOLDER.lock().unwrap()[i]);
 				let dumbFile = fs::read(&dumbFileName).unwrap();
 				let dumbOutputFile = format!("{}{}","sd:/ultimate/Classic Routes/Added Routes (Temp)/",Path::new(&dumbFileName).file_name().unwrap().to_os_string().into_string().unwrap());
-				println!("{}",&dumbOutputFile);
+				println!("[ARClassic]{}",&dumbOutputFile);
 				
 				//fs::File::create(&dumbOutputFile).expect("Couldn't create file");
 				//fs::write("sd:/ultimate/Classic Routes/Mod Routes/standard_route_koopag.prc","").expect("Dummy write failed.");
@@ -318,7 +318,7 @@ pub extern "C" fn init(event: Event) {
 				//End of Todo
 				i = i+1;
 			}
-			println!("{}",hash);
+			println!("[ARClassic]{}",hash);
 			//println!("[ARClassic]{} {} {}",VANILLA_HOLDER.lock().unwrap()[i].as_str(),path.display(),size);
 			if !path.exists()
 			{
